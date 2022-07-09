@@ -1,3 +1,5 @@
+use std::mem;
+
 use crate::shape::{Position, Shape};
 
 #[derive(Debug)]
@@ -32,6 +34,19 @@ impl Tetris {
 
     pub fn tick(&mut self) {
         let translated_current_shape = &self.current_shape + Position(0, 1);
+
+        if self.is_out_of_bounds(&translated_current_shape)
+            || self.is_colliding(&translated_current_shape)
+        {
+            let new_fixed_shape = mem::replace(
+                &mut self.current_shape,
+                &Shape::new_random() + Position((self.width) / 2, 0),
+            );
+
+            self.fixed_shapes.push(new_fixed_shape);
+        } else {
+            self.current_shape = translated_current_shape;
+        }
     }
 }
 
