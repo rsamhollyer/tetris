@@ -2,8 +2,8 @@ use crate::shape::{Position, Shape};
 
 #[derive(Debug)]
 pub struct Tetris {
-    width: u32,
-    height: u32,
+    width: i32,
+    height: i32,
     current_shape: Shape,
     fixed_shapes: Vec<Shape>,
 }
@@ -11,17 +11,23 @@ pub struct Tetris {
 impl Tetris {
     pub fn new(width: u32, height: u32) -> Self {
         Self {
-            width,
-            height,
+            width: width as i32,
+            height: height as i32,
             current_shape: &Shape::new_random() + Position((width as i32) / 2, 0),
             fixed_shapes: vec![],
         }
     }
 
-    pub fn is_out_of_bounds($self,shape:&Shape)->bool{
-        shape.positions.iter().any(|&pos|{
-            pos.0 < 0 || pos.0 >= $self.width as i32 || pos.1 >= $self.height as i32
-        })
+    pub fn is_out_of_bounds(&self, shape: &Shape) -> bool {
+        shape
+            .positions()
+            .all(|pos| 0 <= pos.0 && pos.0 < self.width && 0 <= pos.1 && pos.1 < self.height)
+    }
+
+    pub fn is_colliding(&self, shape: &Shape) -> bool {
+        self.fixed_shapes
+            .iter()
+            .any(|fixed_shape| fixed_shape.collides_with(shape))
     }
 
     pub fn tick(&mut self) {

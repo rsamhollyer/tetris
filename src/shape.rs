@@ -9,6 +9,7 @@ impl Add for Position {
         Position(self.0 + rhs.0, self.1 + rhs.1)
     }
 }
+
 #[derive(Debug, Clone)]
 pub struct Shape {
     positions: HashSet<Position>,
@@ -51,6 +52,14 @@ impl Shape {
             6 => Self::new_z(),
             _ => unreachable!(),
         }
+    }
+
+    pub fn positions(&self) -> impl Iterator<Item = Position> + '_ {
+        self.positions.iter().copied()
+    }
+
+    pub fn collides_with(&self, other: &Shape) -> bool {
+        self.positions.intersection(&other.positions).count() > 0
     }
 }
 
