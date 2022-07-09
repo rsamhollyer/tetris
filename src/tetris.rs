@@ -1,6 +1,11 @@
+use crate::shape::{Position, Shape};
 use std::mem;
 
-use crate::shape::{Position, Shape};
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Direction {
+    Left,
+    Right,
+}
 
 #[derive(Debug)]
 pub struct Tetris {
@@ -45,6 +50,19 @@ impl Tetris {
 
             self.fixed_shapes.push(new_fixed_shape);
         } else {
+            self.current_shape = translated_current_shape;
+        }
+    }
+
+    pub fn shift_current_shape(&mut self, direction: Direction) {
+        let translated_current_shape = &self.current_shape
+            + match direction {
+                Direction::Left => Position(-1, 0),
+                Direction::Right => Position(1, 0),
+            };
+        if !self.is_out_of_bounds(&translated_current_shape)
+            && !self.is_colliding(&translated_current_shape)
+        {
             self.current_shape = translated_current_shape;
         }
     }
