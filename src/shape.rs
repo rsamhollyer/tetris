@@ -61,6 +61,18 @@ impl Shape {
     pub fn collides_with(&self, other: &Shape) -> bool {
         self.positions.intersection(&other.positions).count() > 0
     }
+
+    pub fn rotated(&self) -> Self {
+        let Position(a, b) = self.anchor;
+
+        Self {
+            positions: self
+                .positions()
+                .map(|Position(x, y)| Position(-y + b + a, x - a + b))
+                .collect(),
+            anchor: self.anchor,
+        }
+    }
 }
 
 impl Add<Position> for &Shape {

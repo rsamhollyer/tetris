@@ -54,7 +54,7 @@ impl Tetris {
         }
     }
 
-    pub fn shift_current_shape(&mut self, direction: Direction) {
+    pub fn shift(&mut self, direction: Direction) {
         let translated_current_shape = &self.current_shape
             + match direction {
                 Direction::Left => Position(-1, 0),
@@ -64,6 +64,16 @@ impl Tetris {
             && !self.is_colliding(&translated_current_shape)
         {
             self.current_shape = translated_current_shape;
+        }
+    }
+
+    pub fn rotate(&mut self) {
+        let rotated_current_shape = self.current_shape.rotated();
+
+        if !self.is_out_of_bounds(&rotated_current_shape)
+            && !self.is_colliding(&rotated_current_shape)
+        {
+            self.current_shape = rotated_current_shape;
         }
     }
 }
