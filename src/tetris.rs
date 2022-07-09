@@ -1,5 +1,6 @@
 use crate::shape::Shape;
 
+#[derive(Debug)]
 pub struct Tetris {
     width: usize,
     height: usize,
@@ -15,5 +16,14 @@ impl Tetris {
             current_shape: Shape::new_random(),
             fixed_shapes: vec![],
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::Tetris;
+    #[test]
+    fn test() {
+        println!("{:?}", Tetris::new(5, 10));
     }
 }
