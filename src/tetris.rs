@@ -12,7 +12,7 @@ impl Tetris {
         Self {
             width,
             height,
-            current_shape: todo!(),
+            current_shape: Shape::new_random(),
             fixed_shapes: vec![],
         }
     }
