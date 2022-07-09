@@ -1,1 +1,2 @@
+mod shape;
 mod tetris;
