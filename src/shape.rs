@@ -1,8 +1,14 @@
-use std::collections::HashSet;
+use std::{collections::HashSet, ops::Add};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Position(pub i32, pub i32);
 
+impl Add for Position {
+    type Output = Position;
+    fn add(self, rhs: Self) -> Self::Output {
+        Position(self.0 + rhs.0, self.1 + rhs.1)
+    }
+}
 #[derive(Debug, Clone)]
 pub struct Shape {
     positions: HashSet<Position>,
@@ -44,6 +50,17 @@ impl Shape {
             5 => Self::new_s(),
             6 => Self::new_z(),
             _ => unreachable!(),
+        }
+    }
+}
+
+impl Add<Position> for &Shape {
+    type Output = Shape;
+
+    fn add(self, rhs: Position) -> Self::Output {
+        Shape {
+            positions: self.positions.iter().map(|&pos| pos + rhs).collect(),
+            anchor: self.anchor + rhs,
         }
     }
 }

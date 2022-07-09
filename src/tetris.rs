@@ -17,6 +17,8 @@ impl Tetris {
             fixed_shapes: vec![],
         }
     }
+
+    pub fn tick(&mut self) {}
 }
 
 #[cfg(test)]
