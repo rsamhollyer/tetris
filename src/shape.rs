@@ -54,7 +54,7 @@ impl Shape {
         }
     }
 
-    pub fn positions(&self) -> impl Iterator<Item = Position> + '_ {
+    pub fn iter_positions(&self) -> impl Iterator<Item = Position> + '_ {
         self.positions.iter().copied()
     }
 
@@ -67,11 +67,27 @@ impl Shape {
 
         Self {
             positions: self
-                .positions()
+                .iter_positions()
                 .map(|Position(x, y)| Position(-y + b + a, x - a + b))
                 .collect(),
             anchor: self.anchor,
         }
+    }
+
+    pub fn remove_line(&mut self, y: i32) {
+        self.positions = self
+            .positions
+            .iter()
+            .copied()
+            .filter(|pos| pos.1 != y)
+            .map(|pos| {
+                if pos.1 >= y {
+                    pos
+                } else {
+                    Position(pos.0, pos.1 + 1)
+                }
+            })
+            .collect();
     }
 }
 
