@@ -12,15 +12,17 @@ impl Add for Position {
 
 #[derive(Debug, Clone)]
 pub struct Shape {
+    typ: &'static str,
     positions: HashSet<Position>,
     anchor: Position,
 }
 
 macro_rules! impl_shape_constructor {
-    ($( $new:ident: [$($pos:expr),*] anchored at $anchor:expr; )*) => {
+    ($( $new:ident $typ:literal: [$($pos:expr),*] @ $anchor:expr; )*) => {
        $(
         pub fn $new() -> Self {
             Self {
+                typ: $typ,
                 positions: [$($pos),*].into_iter().collect(),
                 anchor: $anchor,
             }
@@ -30,13 +32,13 @@ macro_rules! impl_shape_constructor {
 
 impl Shape {
     impl_shape_constructor! {
-        new_i: [Position(0, 0),Position(1, 0),Position(2, 0),Position(3, 0)] anchored at Position(1, 0);
-        new_o:[Position(0, 0),Position(1, 0),Position(0, 1),Position(1, 1)] anchored at Position(0, 0);
-        new_t:[Position(0, 0),Position(1, 0),Position(2, 0),Position(1, 1)] anchored at Position(0, 0);
-        new_j:[Position(0, 0),Position(0, 1),Position(0, 2),Position(-1, 2)] anchored at Position(0, 1);
-        new_l:[Position(0, 0),Position(0, 1),Position(0, 2),Position(1, 2)] anchored at Position(0, 1);
-        new_s:[Position(0, 0),Position(1, 0),Position(0, 1),Position(-1, 1)] anchored at Position(0, 0);
-        new_z:[Position(0, 0),Position(-1, 0),Position(0, 1),Position(1, 1)] anchored at Position(0, 0);
+        new_i "I" : [Position(0, 0),Position(1, 0),Position(2, 0),Position(3, 0)] @ Position(1, 0);
+        new_o "O" : [Position(0, 0),Position(1, 0),Position(0, 1),Position(1, 1)] @ Position(0, 0);
+        new_t "T" : [Position(0, 0),Position(1, 0),Position(2, 0),Position(1, 1)] @ Position(0, 0);
+        new_j "J" : [Position(0, 0),Position(0, 1),Position(0, 2),Position(-1, 2)] @ Position(0, 1);
+        new_l "L" : [Position(0, 0),Position(0, 1),Position(0, 2),Position(1, 2)] @ Position(0, 1);
+        new_s "S" : [Position(0, 0),Position(1, 0),Position(0, 1),Position(-1, 1)] @ Position(0, 0);
+        new_z "Z" : [Position(0, 0),Position(-1, 0),Position(0, 1),Position(1, 1)] @ Position(0, 0);
     }
 
     pub fn new_random() -> Self {
@@ -54,8 +56,16 @@ impl Shape {
         }
     }
 
+    pub fn typ(&self) -> &'static str {
+        self.typ
+    }
+
     pub fn iter_positions(&self) -> impl Iterator<Item = Position> + '_ {
         self.positions.iter().copied()
+    }
+
+    pub fn has_position(&self, pos: Position) -> bool {
+        self.positions.contains(&pos)
     }
 
     pub fn collides_with(&self, other: &Shape) -> bool {
@@ -66,6 +76,7 @@ impl Shape {
         let Position(a, b) = self.anchor;
 
         Self {
+            typ: self.typ,
             positions: self
                 .iter_positions()
                 .map(|Position(x, y)| Position(-y + b + a, x - a + b))
@@ -96,6 +107,7 @@ impl Add<Position> for &Shape {
 
     fn add(self, rhs: Position) -> Self::Output {
         Shape {
+            typ: self.typ,
             positions: self.positions.iter().map(|&pos| pos + rhs).collect(),
             anchor: self.anchor + rhs,
         }
